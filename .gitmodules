@@ -1,0 +1,3 @@
+[submodule "src/libs/xcplite"]
+	path = src/libs/xcplite
+	url = https://github.com/bamboocharacing/XCPlite-codeonly.git
