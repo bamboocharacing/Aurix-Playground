@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "make all",
+            "type": "shell",
+            "command": "C:\\Users\\max.holder\\AppData\\Local\\Microsoft\\WinGet\\Links\\make.exe",
+            "args": ["'all'"],
+            "options": {
+                //"cwd": "${workspaceRoot}",
+                "env": {
+                    //"PATH": "C:\\Users\\max.holder\\source\\repos\\AURIX\\tricore-gcc-13.4.1-win32\\bin"
+                    //"PATH": "C:\\Infineon\\AURIX-Configuration-Studio-1.0.24\\eclipse\\tricore-gcc11\\bin"
+                }
+            },
+                "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "make clean",
+            "type": "shell",
+            "command": "C:\\Users\\max.holder\\AppData\\Local\\Microsoft\\WinGet\\Links\\make.exe",
+            "args": ["clean"],
+            "options": {
+                "cwd": "${workspaceRoot}",
+                "env": {
+                    //"PATH": "C:\\Users\\max.holder\\source\\repos\\AURIX\\tricore-gcc-13.4.1-win32\\bin"
+                    //"PATH": "C:\\Infineon\\AURIX-Configuration-Studio-1.0.24\\eclipse\\tricore-gcc11\\bin"
+                }
+            },
+                "group": {
+                "kind": "none",
+                "isDefault": true
+            },
+            "problemMatcher": "$gcc"
+        }
+    ]
+}

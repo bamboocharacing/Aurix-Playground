@@ -1,0 +1,18 @@
+#ifndef __CPU_H__
+#define __CPU_H__
+
+#include "Ifx_Ssw.h"
+
+#ifdef IFX_CFG_SSW_ENABLE_TRICORE5
+#define CPU_CORE_COUNT 6u
+#elif IFX_CFG_SSW_ENABLE_TRICORE3
+#define CPU_CORE_COUNT 4u
+#elif IFX_CFG_SSW_ENABLE_TRICORE2
+#define CPU_CORE_COUNT 3u
+#elif IFX_CFG_SSW_ENABLE_TRICORE1
+#define CPU_CORE_COUNT 2u
+#elif IFX_CFG_SSW_ENABLE_TRICORE0
+#define CPU_CORE_COUNT 1u
+#endif
+
+#endif
