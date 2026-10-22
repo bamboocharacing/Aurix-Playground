@@ -5,6 +5,7 @@
 
 #include "cpu.h"
 #include "sharedmemory.h"
+#include "a2l/a2l_metadata.h"
 
 /** \brief Rolling statistics for one core. Written by that core only.
  * \note Struct lives in LMU. LMU is 64bit wide. Therefore make sure that
