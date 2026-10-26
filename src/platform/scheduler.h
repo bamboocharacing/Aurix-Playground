@@ -12,6 +12,7 @@
  * The STM (System Timer Module) runs at 100MHz after PLL initialization.
  * 1 ms = 100 000 ticks
  */
+/// \todo Remove these macros and calculate it during runtime using the IfxStm_getFrequency() / getTicks method.
 #define SCHEDULER_MS(ms)        ((uint32)((ms) * 100000UL))
 #define SCHEDULER_US(us)        ((uint32)((us) * 100UL))
 
@@ -22,11 +23,12 @@
 /*
  * Execution-time accounting window.
  */
-#ifndef SCHEDULE_STATS_WINDOW
-#define SCHEDULE_STATS_WIDNOW   SCHEDULER_MS(100u)
+#ifndef SCHEDULER_STATS_WINDOW
+#define SCHEDULER_STATS_WINDOW  SCHEDULER_MS(100u)
 #endif
 
-#define SCHEDULER_TICKS_PER_US  (100u)
+/// \todo Get rid of this too, calculate this during runtime to avoid a misconfig between STM frequency
+#define SCHEDULER_TICKS_PER_US  SCHEDULER_US(1)
 
 typedef void (*Scheduler_TaskFn_t)(void);
 

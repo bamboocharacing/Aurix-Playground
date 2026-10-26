@@ -1,0 +1,3 @@
+[submodule "Libraries/cxcp"]
+	path = Libraries/cxcp
+	url = https://github.com/bamboocharacing/cxcp-tricore.git
