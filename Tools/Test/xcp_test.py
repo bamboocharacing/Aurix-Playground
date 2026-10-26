@@ -13,7 +13,8 @@ DAQ_LISTS = [
         stim=False,
         enable_timestamps=False,
         measurements=[
-            ("g_VarA", 0x7000A7E0, 0, "U32")
+            ("g_VarA", 0x7000A7E0, 0, "U32"),
+            ("g_VarSin", 0x7000A7DC, 0, "F32"),
         ],
         priority=0,
         prescaler=1,
@@ -51,7 +52,7 @@ with ap.run(policy=daq_parser) as x:
 
     daq_parser.setup()
     daq_parser.start()
-    time.sleep(10);
+    time.sleep(10)
     daq_parser.stop()
 
     x.disconnect()

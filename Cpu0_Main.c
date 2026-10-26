@@ -46,6 +46,7 @@ Led_t g_led1;
 void Task_RunCounter(void)
 {
     g_varA++;
+    g_varSin = sin(g_varA);
 
     if (g_varA == 1000)
     {
@@ -85,7 +86,5 @@ void core0_main(void)
     while(1)
     {
         Scheduler_Run(&g_sched);
-
-        g_varSin = sin(g_varA);
     }
 }
