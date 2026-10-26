@@ -31,10 +31,10 @@ boolean Scheduler_Init(
 
 /** \brief Adds a task to the scheduler.
  * \returns TRUE if the Task has been added.
- * FALSE if the task was not added because the maximum task count is reached.
+ * FALSE if the task was not added because fn is NULL or the maximum task count is reached.
  * \param sched Pointer to the Scheduler_t structure instance.
  * \param fn Pointer to the task function.
- * \param period Execution Period of the Task.
+ * \param period Execution Period of the Task in STM ticks. 0 runs the task on every pass.
  */
 boolean Scheduler_AddTask(
     Scheduler_t *sched, 
@@ -43,7 +43,8 @@ boolean Scheduler_AddTask(
 {
     uint8 idx;
 
-    if (sched->taskCount >= SCHEDULER_MAX_TASKS)
+    if (fn == NULL ||
+        sched->taskCount >= SCHEDULER_MAX_TASKS)
     {
         return FALSE;
     }
@@ -59,7 +60,10 @@ boolean Scheduler_AddTask(
     return TRUE;
 }
 
-/** \brief Starts running the scheduler. */
+/** \brief Runs one pass of the scheduler.
+ * Must be called repeatedly from the core's main loop.
+ * \param sched Pointer to the scheduler instance.
+ */
 void Scheduler_Run(Scheduler_t *sched)
 {
     uint8 i;
@@ -73,13 +77,20 @@ void Scheduler_Run(Scheduler_t *sched)
             uint32 taskStart;
             uint32 taskTicks;
 
-            sched->tasks[i].lastRun = now;
+            /* Advance by one period to stay on the original time grid */
+            sched->tasks[i].lastRun += sched->tasks[i].period;
+
+            /* Overrun: more than one period behind, skip missed slots 
+             and resync */
+            if ((uint32)(now - sched->tasks[i].lastRun) >= sched->tasks[i].period)
+            {
+                sched->tasks[i].lastRun = now;
+            }
 
             /* Perf Measurement Start */
             taskStart = IfxStm_getLower(sched->stm);
 
-            if (sched->tasks[i].fn != NULL)
-                sched->tasks[i].fn();
+            sched->tasks[i].fn();
 
             taskTicks = IfxStm_getLower(sched->stm) - taskStart;
             /* Perf Measurement End*/
@@ -95,7 +106,7 @@ void Scheduler_Run(Scheduler_t *sched)
 
     elapsed = IfxStm_getLower(sched->stm) - sched->windowStart;
 
-    if (elapsed >= SCHEDULE_STATS_WIDNOW)
+    if (elapsed >= SCHEDULER_STATS_WINDOW)
     {
         uint8 id = sched->coreId;
 
