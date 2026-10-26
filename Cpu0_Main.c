@@ -29,6 +29,7 @@
 #include "IfxScuWdt.h"
 #include "Ifx_Cfg_Ssw.h"
 #include <math.h>
+#include "xcp.h"
 
 #include "src/platform/scheduler.h"
 #include "src/platform/drivers/led/led.h"
@@ -50,6 +51,8 @@ void Task_RunCounter(void)
     {
         g_varA = 0;
     }
+
+    XcpDaq_TriggerEvent(0);
 }
 
 void Task_ToggleLed(void)
@@ -71,15 +74,13 @@ void core0_main(void)
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
-    // TODO: Check if this is the correct pin mapping
-    Led_Init(&g_led1, &MODULE_P20, 12u);
+    /// \todo Check if this is the correct pin mapping
+    Led_Init(&g_led1, &MODULE_P00, 5u);
 
     Scheduler_Init(&g_sched, &MODULE_STM0, 0u);
 
     Scheduler_AddTask(&g_sched, Task_RunCounter, SCHEDULER_MS(100));
     Scheduler_AddTask(&g_sched, Task_ToggleLed, SCHEDULER_MS(500));
-
-    // TODO: Add a sample LED toggle task
 
     while(1)
     {
