@@ -53,7 +53,7 @@ uint8 g_ascTxBuffer[ASC_TX_BUFFER_SIZE + sizeof(Ifx_Fifo) + 8];             /* D
 /*********************************************************************************************************************/
 /*---------------------------------------------Function Implementations----------------------------------------------*/
 /*********************************************************************************************************************/
-IFX_INTERRUPT(asclin0TxISR, 0, INTPRIO_ASCLIN0_TX);                     /* Adding the Interrupt Service Routine     */
+IFX_INTERRUPT(asclin0TxISR, 2, INTPRIO_ASCLIN0_TX);                     /* Adding the Interrupt Service Routine     */
 
 void asclin0TxISR(void)
 {
