@@ -2,4 +2,7 @@ build/*
 debug/*
 bin/*
 .settings/*
+.metadata/*
 *.xml
+.cproject
+*.launch
