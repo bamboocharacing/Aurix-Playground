@@ -28,12 +28,38 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 #include "Ifx_Cfg_Ssw.h"
+#include "Ifx_Lwip.h"
 
 #include "src/platform/scheduler.h"
 
+#include "xcp.h"
+
+
+// TODO: Move this xcp stuff somewhere else, should not be in main
+#define BUILD_DATE __DATE__
+#define BUILD_TIME __TIME__
+
+#define XCP_MAKE_EPK(name) const char Xcp_EEPROM_Kennung[] = name " " BUILD_DATE " " BUILD_TIME
+XCP_MAKE_EPK("ArduinoXCP V1.1.0");
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
-static Scheduler_t g_sched;
+///static Scheduler_t g_sched;
+
+XCP_DAQ_BEGIN_EVENTS 
+XCP_DAQ_DEFINE_EVENT(
+    "EVT 10ms", XCP_DAQ_EVENT_CHANNEL_TYPE_DAQ | XCP_DAQ_CONSISTENCY_DAQ_LIST, XCP_DAQ_EVENT_CHANNEL_TIME_UNIT_1MS, 10
+),
+XCP_DAQ_DEFINE_EVENT(
+    "EVT sporadic", XCP_DAQ_EVENT_CHANNEL_TYPE_DAQ | XCP_DAQ_CONSISTENCY_DAQ_LIST, XCP_DAQ_EVENT_CHANNEL_TIME_UNIT_1MS, 0
+),
+XCP_DAQ_END_EVENTS
+
+void Task_Xcp_100ms(void)
+{
+    // TODO: Use proper daq event channel id
+    XcpDaq_TriggerEvent(0);
+}
 
 void core2_main(void)
 {
@@ -48,10 +74,19 @@ void core2_main(void)
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
     
-    Scheduler_Init(&g_sched, &MODULE_STM2, 2u);
+    ///Scheduler_Init(&g_sched, &MODULE_STM2, 2u);
+    //Scheduler_AddTask(&g_sched, Task_Xcp_100ms, SCHEDULER_MS(100));
+
+    Xcp_Init(); // This also initiates hw
 
     while(1)
     {
-        Scheduler_Run(&g_sched);
+        Ifx_Lwip_pollTimerFlags();                          /* Poll LwIP timers and trigger protocols execution if required */
+        Ifx_Lwip_pollReceiveFlags();
+
+        XcpTl_MainFunction();
+        Xcp_MainFunction();
+
+        //Scheduler_Run(&g_sched);
     }
 }

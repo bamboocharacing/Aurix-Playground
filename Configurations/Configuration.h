@@ -51,6 +51,6 @@
 
 #define IFX_CFG_STM_TICKS_PER_MS    (100000)                /* Value of the system timer in ticks per millisecond   */
 
-#define CPU_WHICH_SERVICE_ETHERNET  0                       /* Define the CPU which services the Ethernet           */
+#define CPU_WHICH_SERVICE_ETHERNET  2                       /* Define the CPU which services the Ethernet           */
 
 #endif
