@@ -1773,14 +1773,3 @@ SECTIONS
         *(.cpu2_dlmu_nc.*)
     } > cpu2_dlmu_nc AT > cpu2_dlmu
 }
-
-SECTIONS
-{
-    .a2l_metadata (NOLOAD) : ALIGN(4)
-    {
-        PROVIDE(__a2l_metadata_start = .);
-        KEEP(*(.a2l_metadata))
-        KEEP(*(.a2l_metadata.*))
-        PROVIDE(__a2l_metadata_end = .);
-    }
-}
