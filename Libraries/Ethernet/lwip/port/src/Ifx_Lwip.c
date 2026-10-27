@@ -69,6 +69,7 @@
 #define IFX_LWIP_DHCP_COARSE_PERIOD (DHCP_COARSE_TIMER_MSECS / IFX_LWIP_TIMER_TICK_MS)
 #define IFX_LWIP_DHCP_FINE_PERIOD   (DHCP_FINE_TIMER_MSECS / IFX_LWIP_TIMER_TICK_MS)
 #define IFX_LWIP_LINK_PERIOD        (100U / IFX_LWIP_TIMER_TICK_MS) /* 100 ms */
+#define IFX_LWIP_IGMP_PERIOD        (IGMP_TMR_INTERVAL / IFX_LWIP_TIMER_TICK_MS)
 
 #define IFX_LWIP_FLAG_ARP           (1U << 1)
 #define IFX_LWIP_FLAG_TCP_FAST      (1U << 2)
@@ -76,6 +77,7 @@
 #define IFX_LWIP_FLAG_LINK          (1U << 4)
 #define IFX_LWIP_FLAG_DHCP_COARSE   (1U << 5)
 #define IFX_LWIP_FLAG_DHCP_FINE     (1U << 6)
+#define IFX_LWIP_FLAG_IGMP          (1U << 7)
 
 /******************************************************************************/
 /*--------------------------------Enumerations--------------------------------*/
@@ -256,6 +258,10 @@ void Ifx_Lwip_onTimerTick(void)
     Ifx_Lwip_timerIncr(lwip->timer.dhcp_fine, IFX_LWIP_DHCP_FINE_PERIOD, IFX_LWIP_FLAG_DHCP_FINE);
 #endif
 
+#if LWIP_IGMP
+    Ifx_Lwip_timerIncr(lwip->timer.igmp, IFX_LWIP_IGMP_PERIOD, IFX_LWIP_FLAG_IGMP);
+#endif
+
     Ifx_Lwip_timerIncr(lwip->timer.link, IFX_LWIP_LINK_PERIOD, IFX_LWIP_FLAG_LINK);
 
     lwip->timerFlags = timerFlags;
@@ -314,6 +320,15 @@ void Ifx_Lwip_pollTimerFlags(void)
     		etharp_tmr();
     }
 
+#if LWIP_IGMP
+    if (timerFlags & IFX_LWIP_FLAG_IGMP)
+    {
+    	/* only if we have a link we will send igmp reports */
+    	if (g_Lwip.netif.flags & NETIF_FLAG_LINK_UP)
+    		igmp_tmr();
+    }
+#endif
+
     if (timerFlags & IFX_LWIP_FLAG_LINK)
     {
         Ifx_GETH_MAC_PHYIF_CONTROL_STATUS ctrl_status;
@@ -360,7 +375,7 @@ void Ifx_Lwip_pollReceiveFlags(void)
 static netif_ext_callback_t g_extCallback;
 
 void netif_state_changed(struct netif* netif, netif_nsc_reason_t reason, const netif_ext_callback_args_t* args) {
-    if(reason | LWIP_NSC_IPV4_ADDRESS_CHANGED) {
+    if(reason & LWIP_NSC_IPV4_ADDRESS_CHANGED) {
         LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("netif: new ip address assigned: %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
                         ip4_addr1_16(netif_ip4_addr(netif)),
                         ip4_addr2_16(netif_ip4_addr(netif)),

@@ -155,6 +155,9 @@ static void low_level_init(netif_t *netif)
     /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
     /* we don't set the LINK_UP flag because we don't say when it is linked */
     netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
+#if LWIP_IGMP
+    netif->flags |= NETIF_FLAG_IGMP;
+#endif
 
     /* Do whatever else is needed to initialize interface. */
     {
@@ -213,6 +216,11 @@ static void low_level_init(netif_t *netif)
         // our reset will not work in this case
         // we was doing this in our main function where we get the ID's to detect the phy
         IfxGeth_Eth_initModule(ethernetif, &GethConfig);
+
+#if LWIP_IGMP
+        /* Pass all multicast frames to lwIP; IGMP drops groups we haven't joined */
+        GETH_MAC_PACKET_FILTER.B.PM = 1;
+#endif
 
         /* We get the ID of Ethernet Phy do determine the board version, also needed for SCR */
         IfxPort_setPinModeOutput(ETH_MDC_PIN.pin.port, ETH_MDC_PIN.pin.pinIndex, IfxPort_OutputMode_pushPull, ETH_MDC_PIN.select);

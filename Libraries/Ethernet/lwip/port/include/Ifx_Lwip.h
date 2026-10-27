@@ -60,6 +60,7 @@
 #include "lwip/tcp.h"
 #include "lwip/priv/tcp_priv.h"
 #include "lwip/dhcp.h"
+#include "lwip/igmp.h"
 #include "lwip/init.h"
 #include "netif/etharp.h"
 #include "netif/ppp/pppoe.h"
@@ -106,6 +107,9 @@ typedef struct
 #if LWIP_DHCP
         uint16 dhcp_coarse;
         uint16 dhcp_fine;
+#endif
+#if LWIP_IGMP
+        uint16 igmp;
 #endif
         uint16 tcp_fast;
         uint16 tcp_slow;
