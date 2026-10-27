@@ -42,6 +42,7 @@
 #define LWIP_NETCONN            0                   /* Disable Netconn API                                                  */
 #define LWIP_SOCKET             0                   /* Disable the Socket API                                               */
 #define SYS_LIGHTWEIGHT_PROT    0                   /* Disable inter-task protection                                        */
+#define LWIP_IGMP               1
 
 
 #define ETH_PAD_SIZE            2                   /* Add 2 bytes before the Ethernet header to ensure payload alignment   */
