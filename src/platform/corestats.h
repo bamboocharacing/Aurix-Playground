@@ -5,7 +5,6 @@
 
 #include "cpu.h"
 #include "sharedmemory.h"
-#include "a2l/a2l_metadata.h"
 
 /** \brief Rolling statistics for one core. Written by that core only.
  * \note Struct lives in LMU. LMU is 64bit wide. Therefore make sure that
@@ -13,10 +12,15 @@
  */
 typedef struct
 {
-    uint32 execUs;          /** Busy Time in the last Window [us] */
-    uint32 execMaxUs;       /** Longest Single Task Dispatch since boot [us] */
-    uint32 loadPmil;        /** Busy Fraction of the Window [per mille] */
-    uint32 aliveCounter;    /** +1 per window | Frozen => Core is Stuck. */
+    uint32 execUs;          /**< Busy Time in the last Window [us] \a2l_unit us */
+    uint32 execMaxUs;       /**< Longest Single Task Dispatch since boot [us] \a2l_unit us */
+    /** Busy Fraction of the Window [per mille]
+     * \a2l_unit       %
+     * \a2l_conversion 0.1 0
+     * \a2l_format     %5.1
+     */
+    uint32 loadPmil;
+    uint32 aliveCounter;    /**< +1 per window | Frozen => Core is Stuck. */
 } CoreStats_t;
 
 extern volatile CoreStats_t g_coreStats[CPU_CORE_COUNT];

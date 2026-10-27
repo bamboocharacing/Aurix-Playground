@@ -9,8 +9,20 @@ TARGET_MAP := $(BIN_DIR)/$(TARGET_NAME).map
 TARGET_HEX := $(BIN_DIR)/$(TARGET_NAME).hex
 TARGET_SIZ := $(BIN_DIR)/$(TARGET_NAME).siz
 TARGET_ELF := $(BIN_DIR)/$(TARGET_NAME).elf
+TARGET_A2L := $(BIN_DIR)/$(TARGET_NAME).a2l
 
-SOURCES = $(call rwildcard, $(SRC_DIR), *.c)
+A2L_DIR := $(BUILD_DIR)/a2l
+A2L_TOOLS := Tools/a2l
+A2L_ANNOTATIONS := $(A2L_DIR)/annotations.json
+A2L_RESOLVED := $(A2L_DIR)/resolved.json
+A2L_PROBE := $(A2L_DIR)/a2l_probe.o
+A2L_EPK_SYMBOL := Xcp_EEPROM_Kennung
+A2L_EXCLUDES := --exclude Libraries --exclude $(BUILD_DIR) --exclude $(BIN_DIR) --exclude Debug --exclude Tools
+PYTHON ?= python
+
+# Tools/ holds host-side helpers (e.g. the A2L probe), not firmware sources.
+SOURCES = $(filter-out $(SRC_DIR)/Tools/%, $(call rwildcard, $(SRC_DIR), *.c))
+HEADERS = $(call rwildcard, $(SRC_DIR), *.h)
 OBJECTS := $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 DEPS := $(OBJECTS:.o=.d)
 IFILES := $(OBJECTS:.o=.i)
@@ -34,7 +46,29 @@ export PATH := $(GCC_DIR):$(PATH)
 # $(info OBJECTS=$(OBJECTS))
 # $(info DEPS=$(DEPS))
 
-all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_SIZ)
+all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_SIZ) $(TARGET_A2L)
+
+$(A2L_ANNOTATIONS): $(SOURCES) $(HEADERS) $(A2L_TOOLS)/a2l_extract.py
+	@echo A2L Extract Annotations
+	$(PYTHON) $(A2L_TOOLS)/a2l_extract.py $(SRC_DIR) $(A2L_EXCLUDES) -o "$@"
+	@echo " "
+
+$(A2L_PROBE): $(A2L_TOOLS)/a2l_probe.c
+	@echo A2L Target and XCP Configuration Probe
+	@if not exist "$(dir $@)" mkdir "$(dir $@)"
+	$(GCC) $(INCLUDES) -O0 -mtc162 -MMD -MP -MF"$(@:.o=.d)" -MT"$@" -c "$<" -o "$@"
+	@echo " "
+
+$(A2L_RESOLVED): $(TARGET_ELF) $(A2L_ANNOTATIONS) $(A2L_PROBE) $(A2L_TOOLS)/a2l_resolve.py
+	@echo A2L Resolve Addresses
+	$(PYTHON) $(A2L_TOOLS)/a2l_resolve.py "$(A2L_ANNOTATIONS)" "$(TARGET_ELF)" --epk-symbol $(A2L_EPK_SYMBOL) --probe "$(A2L_PROBE)" -o "$@"
+	@echo " "
+
+$(TARGET_A2L): $(A2L_RESOLVED) $(A2L_TOOLS)/a2l_generate.py
+	@echo A2L Generate
+	$(PYTHON) $(A2L_TOOLS)/a2l_generate.py "$(A2L_RESOLVED)" -o "$@"
+	@echo Output: "$@"
+	@echo " "
 
 $(TARGET_SIZ): $(TARGET_ELF)
 	@echo TriCore GCC Print Size
@@ -82,4 +116,4 @@ clean:
 	@echo Removed binaries.
 	@echo " "
 
--include $(DEPS)
+-include $(DEPS) $(A2L_PROBE:.o=.d)
