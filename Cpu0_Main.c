@@ -33,6 +33,8 @@
 
 #include "src/platform/scheduler.h"
 #include "src/platform/drivers/led/led.h"
+#include "src/examples/a2l_example.h"
+#include "src/examples/a2l_calibration.h"
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
@@ -60,6 +62,9 @@ void Task_RunCounter(void)
     {
         g_varA = 0;
     }
+
+    A2lExample_Update();
+    A2lCalibration_Update();
 
     XcpDaq_TriggerEvent(0);
 }
