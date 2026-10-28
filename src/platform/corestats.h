@@ -12,14 +12,24 @@
  */
 typedef struct
 {
-    uint32 execUs;          /**< Busy Time in the last Window [us] \a2l_unit us */
-    uint32 execMaxUs;       /**< Longest Single Task Dispatch since boot [us] \a2l_unit us */
-    /** Busy Fraction of the Window [per mille]
-     * \a2l_unit       %
-     * \a2l_conversion 0.1 0
-     * \a2l_format     %5.1
+    /** Busy Time in the last Window [STM ticks, 10 ns]
+     * \a2l_unit       us
+     * \a2l_conversion 0.01 0
+     * \a2l_format     %9.2
      */
-    uint32 loadPmil;
+    uint32 execTicks;
+    /** Longest Single Task Dispatch since boot [STM ticks, 10 ns]
+     * \a2l_unit       us
+     * \a2l_conversion 0.01 0
+     * \a2l_format     %9.2
+     */
+    uint32 execMaxTicks;
+    /** Busy Fraction of the Window [ppm]
+     * \a2l_unit       %
+     * \a2l_conversion 0.0001 0
+     * \a2l_format     %7.4
+     */
+    uint32 loadPpm;
     uint32 aliveCounter;    /**< +1 per window | Frozen => Core is Stuck. */
 } CoreStats_t;
 

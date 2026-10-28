@@ -112,9 +112,10 @@ void Scheduler_Run(Scheduler_t *sched)
 
         if (id < CPU_CORE_COUNT)
         {
-            g_coreStats[id].execUs      = sched->busyTicks / SCHEDULER_TICKS_PER_US;
-            g_coreStats[id].execMaxUs   = sched->maxTicks / SCHEDULER_TICKS_PER_US;
-            g_coreStats[id].loadPmil    = sched->busyTicks / (elapsed / 1000u);
+            /* Raw ticks keep sub-us resolution; the A2L scales to us / % */
+            g_coreStats[id].execTicks    = sched->busyTicks;
+            g_coreStats[id].execMaxTicks = sched->maxTicks;
+            g_coreStats[id].loadPpm      = (uint32)(((uint64)sched->busyTicks * 1000000u) / elapsed);
 
             g_coreStats[id].aliveCounter++;
         }

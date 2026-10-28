@@ -19,9 +19,9 @@ void CoreStats_Init(uint8 coreId)
 {
     if (coreId < CPU_CORE_COUNT)
     {
-        g_coreStats[coreId].execUs          = 0u;
-        g_coreStats[coreId].execMaxUs       = 0u;
-        g_coreStats[coreId].loadPmil        = 0u;
+        g_coreStats[coreId].execTicks       = 0u;
+        g_coreStats[coreId].execMaxTicks    = 0u;
+        g_coreStats[coreId].loadPpm         = 0u;
         g_coreStats[coreId].aliveCounter    = 0u;
     }
 }

@@ -27,9 +27,6 @@
 #define SCHEDULER_STATS_WINDOW  SCHEDULER_MS(100u)
 #endif
 
-/// \todo Get rid of this too, calculate this during runtime to avoid a misconfig between STM frequency
-#define SCHEDULER_TICKS_PER_US  SCHEDULER_US(1)
-
 typedef void (*Scheduler_TaskFn_t)(void);
 
 typedef struct
