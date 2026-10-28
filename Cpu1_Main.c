@@ -30,10 +30,16 @@
 #include "Ifx_Cfg_Ssw.h"
 
 #include "src/platform/scheduler.h"
+#include "src/platform/processor_health.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 static Scheduler_t g_sched;
+
+void Slow_Measurement_Task(void)
+{
+    Processor_Health_UpdateMeasurements();
+}
 
 void core1_main(void)
 {
@@ -48,7 +54,10 @@ void core1_main(void)
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
+    Processor_Health_Init();
+
     Scheduler_Init(&g_sched, &MODULE_STM1, 1u);
+    Scheduler_AddTask(&g_sched, Slow_Measurement_Task, SCHEDULER_MS(200));
     
     while(1)
     {
