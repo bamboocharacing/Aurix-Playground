@@ -252,6 +252,8 @@
     #define XCP_ENABLE_DAQ_COMMANDS (XCP_ON)
 
     #define XCP_ENABLE_GET_DAQ_CLOCK           (XCP_ON)
+    #define XCP_ENABLE_TIME_CORRELATION        (XCP_ON) /* TIME_CORRELATION_PROPERTIES + GET_DAQ_CLOCK_MULTICAST */
+    #define XCP_TIMECORR_SLV_UUID              { 0xDEu, 0xADu, 0xBEu, 0xFFu, 0xFEu, 0xEFu, 0xFEu, 0xEDu } /* EUI-64 from MAC */
     #define XCP_ENABLE_READ_DAQ                (XCP_OFF)
     #define XCP_ENABLE_GET_DAQ_PROCESSOR_INFO  (XCP_ON)
     #define XCP_ENABLE_GET_DAQ_RESOLUTION_INFO (XCP_ON)
