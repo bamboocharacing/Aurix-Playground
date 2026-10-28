@@ -38,7 +38,15 @@ IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
 static Scheduler_t g_sched;
 
+/** \brief Task run counter (XCP test signal).
+ * \a2l_measurement
+ */
 uint32 g_varA = 0;
+/** \brief Sine of the task run counter (XCP test signal).
+ * \a2l_measurement
+ * \a2l_limits -1 1
+ * \a2l_format %6.3
+ */
 float32 g_varSin = 0;
 
 Led_t g_led1;
