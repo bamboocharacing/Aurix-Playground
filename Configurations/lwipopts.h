@@ -42,6 +42,8 @@
 #define LWIP_NETCONN            0                   /* Disable Netconn API                                                  */
 #define LWIP_SOCKET             0                   /* Disable the Socket API                                               */
 #define SYS_LIGHTWEIGHT_PROT    0                   /* Disable inter-task protection                                        */
+#define LWIP_IGMP               1
+#define MEMP_NUM_UDP_PCB        6                   /* DHCP, XCP session, XCP discovery, XCP time sync + headroom          */
 
 
 #define ETH_PAD_SIZE            2                   /* Add 2 bytes before the Ethernet header to ensure payload alignment   */
@@ -60,6 +62,8 @@
 #define DHCP_DEBUG              LWIP_DBG_OFF        /* Enable DHCP Debug                                                    */
 #define NETIF_DEBUG             LWIP_DBG_ON         /* Enable NETIF Debug                                                   */
 #define LWIP_DBG_TYPES_ON       LWIP_DBG_STATE      /* Enable only module state debug messages                              */
+#define IGMP_DEBUG              LWIP_DBG_ON
+
 
 #ifdef __GNUC__
     /* to avoid compiler error for double declaration we inform GNUC that ssize_t is declared by lwip */
