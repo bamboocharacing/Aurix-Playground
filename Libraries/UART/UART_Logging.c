@@ -48,7 +48,7 @@
 /*-------------------------------------------------Global variables--------------------------------------------------*/
 /*********************************************************************************************************************/
 IFX_ALIGN(4) IfxAsclin_Asc g_asc;                                                        /* Declaration of the ASC handle        */
-IFX_ALIGN(4) g_ascTxBuffer[ASC_TX_BUFFER_SIZE + sizeof(Ifx_Fifo) + 8];             /* Declaration of the FIFO parameters   */
+IFX_ALIGN(4) uint8 g_ascTxBuffer[ASC_TX_BUFFER_SIZE + sizeof(Ifx_Fifo) + 8];             /* Declaration of the FIFO parameters   */
 
 /*********************************************************************************************************************/
 /*---------------------------------------------Function Implementations----------------------------------------------*/
